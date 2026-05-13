@@ -6,8 +6,10 @@ tags:
   - Gradle
   - Kotlin DSL
   - 构建工具
+  - ai
 categories:
   - Java
+  - 架构
 ---
 
 ## 为什么选择 Gradle Kotlin DSL
