@@ -1,0 +1,219 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Gradle Kotlin DSL 构建 Java 项目实战指南 | Welcome to my blog!</title><meta name="author" content="mrzhong"><meta name="copyright" content="mrzhong"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="为什么选择 Gradle Kotlin DSL传统的 Gradle 构建脚本使用 Groovy 编写（build.gradle），虽然灵活，但缺少 IDE 的类型检查和代码补全支持。Gradle Kotlin DSL（build.gradle.kts）用 Kotlin 语言替代 Groovy，带来以下优势：  类型安全：编译期就能发现配置错误 IDE 支持：IntelliJ IDEA 对 Kotl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gradle Kotlin DSL 构建 Java 项目实战指南">
+<meta property="og:url" content="http://mrzhong.top/2026/04/03/Gradle-Kotlin-DSL-%E6%9E%84%E5%BB%BA-Java-%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%E6%8C%87%E5%8D%97/index.html">
+<meta property="og:site_name" content="Welcome to my blog!">
+<meta property="og:description" content="为什么选择 Gradle Kotlin DSL传统的 Gradle 构建脚本使用 Groovy 编写（build.gradle），虽然灵活，但缺少 IDE 的类型检查和代码补全支持。Gradle Kotlin DSL（build.gradle.kts）用 Kotlin 语言替代 Groovy，带来以下优势：  类型安全：编译期就能发现配置错误 IDE 支持：IntelliJ IDEA 对 Kotl">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://mrzhong.top/img/avatar.jpg">
+<meta property="article:published_time" content="2026-04-03T02:29:16.000Z">
+<meta property="article:modified_time" content="2026-05-13T14:23:04.311Z">
+<meta property="article:author" content="mrzhong">
+<meta property="article:tag" content="Gradle">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="Kotlin DSL">
+<meta property="article:tag" content="ai">
+<meta property="article:tag" content="构建工具">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://mrzhong.top/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Gradle Kotlin DSL 构建 Java 项目实战指南",
+  "url": "http://mrzhong.top/2026/04/03/Gradle-Kotlin-DSL-%E6%9E%84%E5%BB%BA-Java-%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%E6%8C%87%E5%8D%97/",
+  "image": "http://mrzhong.top/img/avatar.jpg",
+  "datePublished": "2026-04-03T02:29:16.000Z",
+  "dateModified": "2026-05-13T14:23:04.311Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "mrzhong",
+      "url": "http://mrzhong.top"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://mrzhong.top/2026/04/03/Gradle-Kotlin-DSL-%E6%9E%84%E5%BB%BA-Java-%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%E6%8C%87%E5%8D%97/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.5-b1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Gradle Kotlin DSL 构建 Java 项目实战指南',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.0.0"></head><body><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Welcome to my blog!</span></a><a class="nav-page-title" href="/"><span class="site-name">Gradle Kotlin DSL 构建 Java 项目实战指南</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">Gradle Kotlin DSL 构建 Java 项目实战指南</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-04-03T02:29:16.000Z" title="发表于 2026-04-03 10:29:16">2026-04-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-05-13T14:23:04.311Z" title="更新于 2026-05-13 22:23:04">2026-05-13</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/">Java</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/%E6%9E%B6%E6%9E%84/">架构</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="为什么选择-Gradle-Kotlin-DSL"><a href="#为什么选择-Gradle-Kotlin-DSL" class="headerlink" title="为什么选择 Gradle Kotlin DSL"></a>为什么选择 Gradle Kotlin DSL</h2><p>传统的 Gradle 构建脚本使用 Groovy 编写（<code>build.gradle</code>），虽然灵活，但缺少 IDE 的类型检查和代码补全支持。Gradle Kotlin DSL（<code>build.gradle.kts</code>）用 Kotlin 语言替代 Groovy，带来以下优势：</p>
+<ul>
+<li>类型安全：编译期就能发现配置错误</li>
+<li>IDE 支持：IntelliJ IDEA 对 Kotlin DSL 提供完整的代码补全和跳转</li>
+<li>更好的重构能力：重命名、提取变量等操作一应俱全</li>
+</ul>
+<p>如果你是 Java 开发者，不需要会 Kotlin，掌握几个基础语法就能上手。</p>
+<h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><h3 id="方式一：命令行初始化"><a href="#方式一：命令行初始化" class="headerlink" title="方式一：命令行初始化"></a>方式一：命令行初始化</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> my-project &amp;&amp; <span class="built_in">cd</span> my-project</span><br><span class="line">gradle init</span><br></pre></td></tr></table></figure>
+
+<p>选择 <code>Application</code> → <code>Java</code> → <code>Kotlin</code> 作为 DSL 语言，会自动生成基础项目结构。</p>
+<h3 id="方式二：Spring-Initializr"><a href="#方式二：Spring-Initializr" class="headerlink" title="方式二：Spring Initializr"></a>方式二：Spring Initializr</h3><p>访问 <a target="_blank" rel="noopener" href="https://start.spring.io/">https://start.spring.io</a> ，选择 Gradle - Kotlin 作为构建工具，生成项目即可。</p>
+<h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">my-project/</span><br><span class="line">├── build.gradle.kts       # 构建脚本</span><br><span class="line">├── settings.gradle.kts    # 项目设置</span><br><span class="line">├── gradle.properties      # Gradle 属性配置</span><br><span class="line">└── src/</span><br><span class="line">    ├── main/java/         # Java 源码</span><br><span class="line">    └── test/java/         # 测试代码</span><br></pre></td></tr></table></figure>
+
+<h2 id="核心配置详解"><a href="#核心配置详解" class="headerlink" title="核心配置详解"></a>核心配置详解</h2><h3 id="基础的-build-gradle-kts"><a href="#基础的-build-gradle-kts" class="headerlink" title="基础的 build.gradle.kts"></a>基础的 build.gradle.kts</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    java</span><br><span class="line">    application</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">group = <span class="string">&quot;com.example&quot;</span></span><br><span class="line">version = <span class="string">&quot;1.0.0&quot;</span></span><br><span class="line"></span><br><span class="line">java &#123;</span><br><span class="line">    sourceCompatibility = JavaVersion.VERSION_17</span><br><span class="line">    targetCompatibility = JavaVersion.VERSION_17</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">repositories &#123;</span><br><span class="line">    mavenCentral()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    <span class="comment">// 编译时依赖</span></span><br><span class="line">    implementation(<span class="string">&quot;org.springframework.boot:spring-boot-starter-web:3.2.0&quot;</span>)</span><br><span class="line">    <span class="comment">// 测试依赖</span></span><br><span class="line">    testImplementation(<span class="string">&quot;org.junit.jupiter:junit-jupiter:5.10.0&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">tasks.test &#123;</span><br><span class="line">    useJUnitPlatform()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">application &#123;</span><br><span class="line">    mainClass.<span class="keyword">set</span>(<span class="string">&quot;com.example.Main&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="从-Groovy-迁移的关键差异"><a href="#从-Groovy-迁移的关键差异" class="headerlink" title="从 Groovy 迁移的关键差异"></a>从 Groovy 迁移的关键差异</h3><p><strong>字符串插值</strong></p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Groovy</span></span><br><span class="line">version = <span class="string">&quot;<span class="subst">$&#123;project.version&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Kotlin DSL</span></span><br><span class="line">version = <span class="string">&quot;<span class="subst">$&#123;project.version&#125;</span>&quot;</span></span><br><span class="line"><span class="comment">// 注意：Kotlin 中 $project 也可以，但 $&#123;&#125; 更安全</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>赋值操作</strong></p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Groovy</span></span><br><span class="line">sourceCompatibility = <span class="string">&#x27;17&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Kotlin DSL</span></span><br><span class="line">java &#123;</span><br><span class="line">    sourceCompatibility = JavaVersion.VERSION_17</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>task 配置</strong></p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Groovy</span></span><br><span class="line">test &#123;</span><br><span class="line">    useJUnitPlatform()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Kotlin DSL</span></span><br><span class="line">tasks.test &#123;</span><br><span class="line">    useJUnitPlatform()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意 Kotlin DSL 中访问 task 需要 <code>tasks.xxx</code> 的语法。</p>
+<h2 id="依赖管理"><a href="#依赖管理" class="headerlink" title="依赖管理"></a>依赖管理</h2><h3 id="声明依赖"><a href="#声明依赖" class="headerlink" title="声明依赖"></a>声明依赖</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    <span class="comment">// 核心依赖：编译和运行时都需要</span></span><br><span class="line">    implementation(<span class="string">&quot;com.google.guava:guava:33.0.0-jre&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 编译期依赖：不会被打包</span></span><br><span class="line">    compileOnly(<span class="string">&quot;org.projectlombok:lombok:1.18.30&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 注解处理器</span></span><br><span class="line">    annotationProcessor(<span class="string">&quot;org.projectlombok:lombok:1.18.30&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 运行时依赖：编译时不需要</span></span><br><span class="line">    runtimeOnly(<span class="string">&quot;com.mysql:mysql-connector-j:8.2.0&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 测试依赖</span></span><br><span class="line">    testImplementation(<span class="string">&quot;org.springframework.boot:spring-boot-starter-test:3.2.0&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用版本目录（Version-Catalog）"><a href="#使用版本目录（Version-Catalog）" class="headerlink" title="使用版本目录（Version Catalog）"></a>使用版本目录（Version Catalog）</h3><p>在 <code>gradle/libs.versions.toml</code> 中统一管理版本：</p>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[versions]</span></span><br><span class="line"><span class="attr">spring-boot</span> = <span class="string">&quot;3.2.0&quot;</span></span><br><span class="line"><span class="attr">mybatis-flex</span> = <span class="string">&quot;1.7.5&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="section">[libraries]</span></span><br><span class="line"><span class="attr">spring-boot-starter-web</span> = &#123; module = <span class="string">&quot;org.springframework.boot:spring-boot-starter-web&quot;</span>, version.ref = <span class="string">&quot;spring-boot&quot;</span> &#125;</span><br><span class="line"><span class="attr">mybatis-flex-spring-boot</span> = &#123; module = <span class="string">&quot;com.mybatis-flex:mybatis-flex-spring-boot-starter&quot;</span>, version.ref = <span class="string">&quot;mybatis-flex&quot;</span> &#125;</span><br><span class="line"></span><br><span class="line"><span class="section">[plugins]</span></span><br><span class="line"><span class="attr">spring-boot</span> = &#123; id = <span class="string">&quot;org.springframework.boot&quot;</span>, version.ref = <span class="string">&quot;spring-boot&quot;</span> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>在 <code>build.gradle.kts</code> 中引用：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    implementation(libs.spring.boot.starter.web)</span><br><span class="line">    implementation(libs.mybatis.flex.spring.boot)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="多模块项目"><a href="#多模块项目" class="headerlink" title="多模块项目"></a>多模块项目</h2><h3 id="settings-gradle-kts"><a href="#settings-gradle-kts" class="headerlink" title="settings.gradle.kts"></a>settings.gradle.kts</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">rootProject.name = <span class="string">&quot;my-project&quot;</span></span><br><span class="line"></span><br><span class="line">include(</span><br><span class="line">    <span class="string">&quot;app&quot;</span>,</span><br><span class="line">    <span class="string">&quot;common&quot;</span>,</span><br><span class="line">    <span class="string">&quot;service-user&quot;</span>,</span><br><span class="line">    <span class="string">&quot;service-order&quot;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="父项目的-build-gradle-kts"><a href="#父项目的-build-gradle-kts" class="headerlink" title="父项目的 build.gradle.kts"></a>父项目的 build.gradle.kts</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    java</span><br><span class="line">    id(<span class="string">&quot;org.springframework.boot&quot;</span>) version <span class="string">&quot;3.2.0&quot;</span> apply <span class="literal">false</span></span><br><span class="line">    id(<span class="string">&quot;io.spring.dependency-management&quot;</span>) version <span class="string">&quot;1.1.4&quot;</span> apply <span class="literal">false</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">subprojects &#123;</span><br><span class="line">    apply(plugin = <span class="string">&quot;java&quot;</span>)</span><br><span class="line">    apply(plugin = <span class="string">&quot;io.spring.dependency-management&quot;</span>)</span><br><span class="line"></span><br><span class="line">    group = <span class="string">&quot;com.example&quot;</span></span><br><span class="line">    version = <span class="string">&quot;1.0.0&quot;</span></span><br><span class="line"></span><br><span class="line">    java &#123;</span><br><span class="line">        sourceCompatibility = JavaVersion.VERSION_17</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    repositories &#123;</span><br><span class="line">        mavenCentral()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    dependencyManagement &#123;</span><br><span class="line">        imports &#123;</span><br><span class="line">            mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="子模块的-build-gradle-kts"><a href="#子模块的-build-gradle-kts" class="headerlink" title="子模块的 build.gradle.kts"></a>子模块的 build.gradle.kts</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    implementation(project(<span class="string">&quot;:common&quot;</span>))</span><br><span class="line">    implementation(<span class="string">&quot;org.springframework.boot:spring-boot-starter-web&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="自定义-Task"><a href="#自定义-Task" class="headerlink" title="自定义 Task"></a>自定义 Task</h2><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">tasks.register(<span class="string">&quot;printProjectInfo&quot;</span>) &#123;</span><br><span class="line">    group = <span class="string">&quot;help&quot;</span></span><br><span class="line">    description = <span class="string">&quot;打印项目信息&quot;</span></span><br><span class="line">    doLast &#123;</span><br><span class="line">        println(<span class="string">&quot;项目名称: <span class="subst">$&#123;project.name&#125;</span>&quot;</span>)</span><br><span class="line">        println(<span class="string">&quot;项目版本: <span class="subst">$&#123;project.version&#125;</span>&quot;</span>)</span><br><span class="line">        println(<span class="string">&quot;Java 版本: <span class="subst">$&#123;project.java.sourceCompatibility&#125;</span>&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="常用构建命令"><a href="#常用构建命令" class="headerlink" title="常用构建命令"></a>常用构建命令</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编译项目</span></span><br><span class="line">./gradlew build</span><br><span class="line"></span><br><span class="line"><span class="comment"># 跳过测试构建</span></span><br><span class="line">./gradlew build -x <span class="built_in">test</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行项目</span></span><br><span class="line">./gradlew bootRun</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看依赖树</span></span><br><span class="line">./gradlew dependencies</span><br><span class="line"></span><br><span class="line"><span class="comment"># 清理构建产物</span></span><br><span class="line">./gradlew clean</span><br><span class="line"></span><br><span class="line"><span class="comment"># 刷新依赖（解决缓存问题）</span></span><br><span class="line">./gradlew build --refresh-dependencies</span><br></pre></td></tr></table></figure>
+
+<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><h3 id="1-IDE-同步失败"><a href="#1-IDE-同步失败" class="headerlink" title="1. IDE 同步失败"></a>1. IDE 同步失败</h3><p>Kotlin DSL 的 IDE 同步比 Groovy 慢，这是正常的。如果频繁失败，尝试：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 关闭 Gradle Daemon 后重新构建</span></span><br><span class="line">./gradlew --stop</span><br><span class="line">./gradlew build</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-插件不兼容"><a href="#2-插件不兼容" class="headerlink" title="2. 插件不兼容"></a>2. 插件不兼容</h3><p>部分老旧插件对 Kotlin DSL 的支持不完善。遇到这种情况，可以在 <code>settings.gradle.kts</code> 中通过 pluginManagement 指定插件仓库：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">pluginManagement &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        gradlePluginPortal()</span><br><span class="line">        mavenCentral()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-构建速度慢"><a href="#3-构建速度慢" class="headerlink" title="3. 构建速度慢"></a>3. 构建速度慢</h3><p>在 <code>gradle.properties</code> 中开启构建缓存：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">org.gradle.caching</span>=<span class="string">true</span></span><br><span class="line"><span class="attr">org.gradle.parallel</span>=<span class="string">true</span></span><br><span class="line"><span class="attr">org.gradle.jvmargs</span>=<span class="string">-Xmx1024m</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Gradle Kotlin DSL 是 Java 项目构建工具的现代化选择。它带来的类型安全和 IDE 支持在日常开发中能省下不少时间。对于新项目，建议直接使用 Kotlin DSL。老项目如果没有特殊需求，也不必强行迁移，能跑就别动。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://mrzhong.top">mrzhong</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://mrzhong.top/2026/04/03/Gradle-Kotlin-DSL-%E6%9E%84%E5%BB%BA-Java-%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%E6%8C%87%E5%8D%97/">http://mrzhong.top/2026/04/03/Gradle-Kotlin-DSL-%E6%9E%84%E5%BB%BA-Java-%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%E6%8C%87%E5%8D%97/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://mrzhong.top" target="_blank">Welcome to my blog!</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a><a class="post-meta__tags" href="/tags/Gradle/">Gradle</a><a class="post-meta__tags" href="/tags/Kotlin-DSL/">Kotlin DSL</a><a class="post-meta__tags" href="/tags/%E6%9E%84%E5%BB%BA%E5%B7%A5%E5%85%B7/">构建工具</a><a class="post-meta__tags" href="/tags/ai/">ai</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/05/13/%E4%BB%8E%E7%9B%91%E6%8E%A7%E5%88%B0%E5%8F%AF%E8%A7%82%E6%B5%8B%E6%80%A7/" title="从监控到可观测性"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">从监控到可观测性</div></div><div class="info-2"><div class="info-item-1">“可观测性”火了这几年，说到底跟监控的区别就一句话： 监控是你知道要看什么，可观测性是出了你没想到的问题时，你还能找到答案。 前者给你确定性的安全感，后者让你有能力处理不确定的故障。两者不在一个维度上。  三大件里，Metrics、Logging、Tracing，不用一上来全上。我的建议是：先把 Metrics 搞好。 日志你本来就有，问题不是没有日志，是有效的太少。Tracing 等你真的被分布式问题搞痛再说。但 Metrics 不行，CPU、内存、QPS、延迟不看，就真的瞎了。  为什么选 Actuator + Prometheus + Grafana？因为在 Java 生态里，这是标准答案感最强的组合。 Actuator 是 Spring 官方给应用装的探头。JVM、HTTP、线程池、数据源全部暴露出来，不需要你写采集代码。它底下是 Micrometer，类似 SLF4J，今天接 Prometheus，改天公司要上 Datadog，换后面那层就行，应用代码不用动。这个设计的价值是：你做的配置工作不会绑定到某个特定平台。 Prometheus 有意思在它是拉数据，不是等应用推...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/05/13/%E4%BB%8E%E7%9B%91%E6%8E%A7%E5%88%B0%E5%8F%AF%E8%A7%82%E6%B5%8B%E6%80%A7/" title="从监控到可观测性"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-13</div><div class="info-item-2">从监控到可观测性</div></div><div class="info-2"><div class="info-item-1">“可观测性”火了这几年，说到底跟监控的区别就一句话： 监控是你知道要看什么，可观测性是出了你没想到的问题时，你还能找到答案。 前者给你确定性的安全感，后者让你有能力处理不确定的故障。两者不在一个维度上。  三大件里，Metrics、Logging、Tracing，不用一上来全上。我的建议是：先把 Metrics 搞好。 日志你本来就有，问题不是没有日志，是有效的太少。Tracing 等你真的被分布式问题搞痛再说。但 Metrics 不行，CPU、内存、QPS、延迟不看，就真的瞎了。  为什么选 Actuator + Prometheus + Grafana？因为在 Java 生态里，这是标准答案感最强的组合。 Actuator 是 Spring 官方给应用装的探头。JVM、HTTP、线程池、数据源全部暴露出来，不需要你写采集代码。它底下是 Micrometer，类似 SLF4J，今天接 Prometheus，改天公司要上 Datadog，换后面那层就行，应用代码不用动。这个设计的价值是：你做的配置工作不会绑定到某个特定平台。 Prometheus 有意思在它是拉数据，不是等应用推...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">mrzhong</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">2</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9-Gradle-Kotlin-DSL"><span class="toc-number">1.</span> <span class="toc-text">为什么选择 Gradle Kotlin DSL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE"><span class="toc-number">2.</span> <span class="toc-text">创建项目</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E5%BC%8F%E4%B8%80%EF%BC%9A%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-number">2.1.</span> <span class="toc-text">方式一：命令行初始化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E5%BC%8F%E4%BA%8C%EF%BC%9ASpring-Initializr"><span class="toc-number">2.2.</span> <span class="toc-text">方式二：Spring Initializr</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84"><span class="toc-number">3.</span> <span class="toc-text">项目结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3"><span class="toc-number">4.</span> <span class="toc-text">核心配置详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E7%9A%84-build-gradle-kts"><span class="toc-number">4.1.</span> <span class="toc-text">基础的 build.gradle.kts</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%8E-Groovy-%E8%BF%81%E7%A7%BB%E7%9A%84%E5%85%B3%E9%94%AE%E5%B7%AE%E5%BC%82"><span class="toc-number">4.2.</span> <span class="toc-text">从 Groovy 迁移的关键差异</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86"><span class="toc-number">5.</span> <span class="toc-text">依赖管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A3%B0%E6%98%8E%E4%BE%9D%E8%B5%96"><span class="toc-number">5.1.</span> <span class="toc-text">声明依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E7%89%88%E6%9C%AC%E7%9B%AE%E5%BD%95%EF%BC%88Version-Catalog%EF%BC%89"><span class="toc-number">5.2.</span> <span class="toc-text">使用版本目录（Version Catalog）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E6%A8%A1%E5%9D%97%E9%A1%B9%E7%9B%AE"><span class="toc-number">6.</span> <span class="toc-text">多模块项目</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#settings-gradle-kts"><span class="toc-number">6.1.</span> <span class="toc-text">settings.gradle.kts</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%88%B6%E9%A1%B9%E7%9B%AE%E7%9A%84-build-gradle-kts"><span class="toc-number">6.2.</span> <span class="toc-text">父项目的 build.gradle.kts</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%90%E6%A8%A1%E5%9D%97%E7%9A%84-build-gradle-kts"><span class="toc-number">6.3.</span> <span class="toc-text">子模块的 build.gradle.kts</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89-Task"><span class="toc-number">7.</span> <span class="toc-text">自定义 Task</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%9E%84%E5%BB%BA%E5%91%BD%E4%BB%A4"><span class="toc-number">8.</span> <span class="toc-text">常用构建命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="toc-number">9.</span> <span class="toc-text">常见问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-IDE-%E5%90%8C%E6%AD%A5%E5%A4%B1%E8%B4%A5"><span class="toc-number">9.1.</span> <span class="toc-text">1. IDE 同步失败</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%8F%92%E4%BB%B6%E4%B8%8D%E5%85%BC%E5%AE%B9"><span class="toc-number">9.2.</span> <span class="toc-text">2. 插件不兼容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%9E%84%E5%BB%BA%E9%80%9F%E5%BA%A6%E6%85%A2"><span class="toc-number">9.3.</span> <span class="toc-text">3. 构建速度慢</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">10.</span> <span class="toc-text">总结</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/13/%E4%BB%8E%E7%9B%91%E6%8E%A7%E5%88%B0%E5%8F%AF%E8%A7%82%E6%B5%8B%E6%80%A7/" title="从监控到可观测性">从监控到可观测性</a><time datetime="2026-05-13T14:30:00.000Z" title="发表于 2026-05-13 22:30:00">2026-05-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/04/03/Gradle-Kotlin-DSL-%E6%9E%84%E5%BB%BA-Java-%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%E6%8C%87%E5%8D%97/" title="Gradle Kotlin DSL 构建 Java 项目实战指南">Gradle Kotlin DSL 构建 Java 项目实战指南</a><time datetime="2026-04-03T02:29:16.000Z" title="发表于 2026-04-03 10:29:16">2026-04-03</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By mrzhong</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.0.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.5-b1</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.5-b1"></script><script src="/js/main.js?v=5.5.5-b1"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
