@@ -1,3 +1,8 @@
 avatar:
   img: /img/avatar.jpg
   effect: false
+
+# 顶部导航菜单
+menu:
+  首页: / || fas fa-home
+  项目: /apps/ || fas fa-rocket
